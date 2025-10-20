@@ -22,7 +22,7 @@ async function testEmpresaInsert() {
       return;
     }
 
-    console.log('✅ Usuário criado:', authData.user.id);
+    console.log('✅ Usuário criado com sucesso');
     console.log('   Email:', authData.user.email);
 
     // 2. Aguardar um pouco para o usuário ser processado
@@ -43,7 +43,7 @@ async function testEmpresaInsert() {
       return;
     }
 
-    console.log('✅ Usuário verificado:', user.id);
+    console.log('✅ Usuário verificado com sucesso');
 
     // 4. Tentar inserir empresa
     console.log('\n4️⃣ Tentando inserir empresa...');

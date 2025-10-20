@@ -53,10 +53,10 @@ export default function AgendaTestPage() {
   const [loadingCalendars, setLoadingCalendars] = useState(false);
 
       useEffect(() => {
-        console.log('AgendaTestPage: useEffect executado');
+        // useEffect executado
         // Verificar se há tokens salvos
         const savedTokens = googleAuthService.getTokens();
-        console.log('AgendaTestPage: tokens encontrados:', !!savedTokens);
+        // Verificando tokens
         if (savedTokens) {
           setTokens(savedTokens);
           // Define usuário padrão sem chamar API
@@ -82,9 +82,9 @@ export default function AgendaTestPage() {
 
   // Carregar dados quando tokens estiverem disponíveis
   useEffect(() => {
-    console.log('AgendaTestPage: tokens mudaram:', !!tokens);
+    // Tokens atualizados
     if (tokens) {
-      console.log('AgendaTestPage: carregando calendários e eventos');
+      // Carregando calendários e eventos
       loadCalendars(tokens.access_token);
       loadTomorrowEvents(tokens.access_token);
     }

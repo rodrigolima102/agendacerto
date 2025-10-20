@@ -20,7 +20,7 @@ async function debugAuthSession() {
       console.log('✅ Sessão verificada');
       console.log('   Sessão ativa:', !!sessionData.session);
       if (sessionData.session) {
-        console.log('   User ID:', sessionData.session.user.id);
+        console.log('   User ID: ***');
         console.log('   Email:', sessionData.session.user.email);
       }
     }

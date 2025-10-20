@@ -1,9 +1,9 @@
 import 'dotenv/config';
 
-const SUPABASE_URL = 'https://tqsibusymtsvpihnyieo.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_yCnml2-JPc_uySkMiSasMg_eUKbMzhl';
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://tqsibusymtsvpihnyieo.supabase.co';
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 // Service key apenas para scripts de backend - NUNCA no frontend
-const SUPABASE_SERVICE_KEY = 'sb_secret_WDcPbCqaInWcDxlGQb-Nww_eMslH8QO';
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY || '';
 
 async function testEmpresasTable() {
   console.log('🔍 Testando acesso à tabela empresas...\n');

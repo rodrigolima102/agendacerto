@@ -45,8 +45,7 @@ export async function POST(request: NextRequest) {
       createdAt: Date.now(),
     });
 
-    console.log('Generated public token:', publicToken);
-    console.log('Total tokens in storage:', publicTokens.size);
+    // Token público gerado com sucesso
 
     return NextResponse.json({
       success: true,

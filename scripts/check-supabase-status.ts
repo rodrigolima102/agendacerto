@@ -1,8 +1,8 @@
 import 'dotenv/config';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://tqsibusymtsvpihnyieo.supabase.co';
-const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY || 'sb_secret_WDcPbCqaInWcDxlGQb-Nww_eMslH8QO';
-const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'sb_publishable_yCnml2-JPc_uySkMiSasMg_eUKbMzhl';
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY || '';
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
 async function checkSupabaseStatus() {
   console.log('🔍 Verificando status completo do Supabase...\n');
@@ -95,7 +95,7 @@ async function checkSupabaseStatus() {
       if (usersData.length > 0) {
         console.log('📧 Últimos usuários:');
         usersData.slice(0, 3).forEach((user: any) => {
-          console.log(`   - ${user.email} (${user.created_at})`);
+          console.log(`   - ${user.email} (Created: ***)`);
         });
       }
     } else {

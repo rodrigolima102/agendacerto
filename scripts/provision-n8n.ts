@@ -2,12 +2,12 @@
 import 'dotenv/config';
 
 const BASE = process.env.N8N_BASE_URL || 'https://rodrigolima102.app.n8n.cloud';
-const KEY  = process.env.N8N_API_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZDNmNGVmYi1jMTAwLTQzYzktYjA5My05YWJmOWJhZWEwYWYiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzYwOTM4MjY4fQ.Jn5LPpRPzK84RgYDc2MMTVH9KO1J_NQ4jb9PJYy3g-c';
+const KEY  = process.env.N8N_API_KEY || '';
 const TEMPLATE_ID = process.env.N8N_TEMPLATE_ID || '20GgnhGp77RrFmwa';
 
 // Supabase Configuration
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://tqsibusymtsvpihnyieo.supabase.co';
-const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY || 'sb_secret_WDcPbCqaInWcDxlGQb-Nww_eMslH8QO';
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY || '';
 
 async function testConnection() {
   if (!BASE || !KEY) {

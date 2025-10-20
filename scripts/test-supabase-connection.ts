@@ -5,7 +5,7 @@ const SUPABASE_URLS = [
   'https://tqsibusymtsvpihnyieo.supabase.co',
 ];
 
-const SUPABASE_ANON_KEY = 'sb_publishable_yCnml2-JPc_uySkMiSasMg_eUKbMzhl';
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
 async function testSupabaseConnection() {
   console.log('🔍 Testando conexão com Supabase...\n');

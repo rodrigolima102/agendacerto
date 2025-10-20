@@ -15,8 +15,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const clientId = '1005292864367-ins3o5uel2istn3gmg37vrqv63t05lbj.apps.googleusercontent.com';
-    const clientSecret = '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';
+    const clientId = process.env.GOOGLE_CLIENT_ID;
+    const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
 
     if (!clientId || !clientSecret) {
       return NextResponse.json(

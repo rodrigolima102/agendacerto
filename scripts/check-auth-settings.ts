@@ -1,7 +1,7 @@
 import 'dotenv/config';
 
-const SUPABASE_URL = 'https://tqsibusymtsvpihnyieo.supabase.co';
-const SUPABASE_SERVICE_KEY = 'sb_secret_WDcPbCqaInWcDxlGQb-Nww_eMslH8QO';
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://tqsibusymtsvpihnyieo.supabase.co';
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY || '';
 
 async function checkAuthSettings() {
   console.log('🔍 Verificando configurações de autenticação...\n');

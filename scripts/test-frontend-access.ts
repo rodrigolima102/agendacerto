@@ -1,7 +1,7 @@
 import 'dotenv/config';
 
-const SUPABASE_URL = 'https://tqsibusymtsvpihnyieo.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_yCnml2-JPc_uySkMiSasMg_eUKbMzhl';
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://tqsibusymtsvpihnyieo.supabase.co';
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
 async function testFrontendAccess() {
   console.log('🔍 Testando acesso do frontend (apenas anon key)...\n');

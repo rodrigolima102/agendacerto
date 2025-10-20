@@ -1,7 +1,7 @@
 import 'dotenv/config';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://tqsibusymtsvpihnyieo.supabase.co';
-const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY || 'sb_secret_WDcPbCqaInWcDxlGQb-Nww_eMslH8QO';
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY || '';
 
 async function checkSupabasePolicies() {
   console.log('🔍 Verificando políticas RLS do Supabase...\n');
@@ -143,7 +143,7 @@ CREATE POLICY "Service role can manage all companies" ON empresas
       const usersData = await usersResponse.json();
       console.log('👥 Usuários encontrados:', usersData.length);
       usersData.forEach((user: any) => {
-        console.log(`   - ${user.email} (${user.id})`);
+        console.log(`   - ${user.email} (ID: ***)`);
       });
     }
 

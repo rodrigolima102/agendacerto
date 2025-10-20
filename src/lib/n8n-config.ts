@@ -9,7 +9,7 @@
 
 export const N8N_CONFIG = {
   // API Key do N8N
-  apiKey: process.env.N8N_API_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZDNmNGVmYi1jMTAwLTQzYzktYjA5My05YWJmOWJhZWEwYWYiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzYwOTM4MjY4fQ.Jn5LPpRPzK84RgYDc2MMTVH9KO1J_NQ4jb9PJYy3g-c',
+  apiKey: process.env.N8N_API_KEY || '',
   
   // Base URL do N8N
   baseUrl: process.env.N8N_BASE_URL || 'https://rodrigolima102.app.n8n.cloud',

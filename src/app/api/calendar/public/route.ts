@@ -36,13 +36,12 @@ export async function GET(request: NextRequest) {
     }
 
     // Validar token público
-    console.log('Validating public token:', publicToken);
-    console.log('Available tokens:', Array.from(publicTokens.keys()));
+    // Validando token público
     
     const tokenData = publicTokens.get(publicToken);
     
     if (!tokenData) {
-      console.log('Token not found in storage');
+      // Token não encontrado
       return NextResponse.json(
         { message: 'Invalid or expired token' },
         { status: 404 }

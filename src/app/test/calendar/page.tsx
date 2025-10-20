@@ -180,17 +180,17 @@ export default function CalendarPage() {
 
   const getEventsForDate = (date: Date) => {
     const dateStr = date.toISOString().split('T')[0];
-    console.log(`Looking for events on: ${dateStr}`);
+    // Procurando eventos para a data
     console.log(`All events:`, events);
     
     const dayEvents = events.filter(event => {
       const eventDate = event.start?.dateTime ? 
         new Date(event.start.dateTime).toISOString().split('T')[0] :
         event.start?.date;
-      console.log(`Event date: ${eventDate}, Looking for: ${dateStr}`);
+      // Verificando data do evento
       return eventDate === dateStr;
     });
-    console.log(`Events for ${dateStr}:`, dayEvents);
+    // Eventos encontrados para a data
     return dayEvents;
   };
 

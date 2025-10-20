@@ -83,14 +83,12 @@ export default function SignupPage() {
         throw new Error('Erro ao criar usuário');
       }
 
-      console.log('🔍 DEBUG - Após signup:');
-      console.log('  - user.id:', authData.user.id);
-      console.log('  - session:', !!authData.session);
+      // Debug logs removidos por segurança
 
       // 2. Verificar se o email precisa ser confirmado
       let user = authData.user;
       if (!authData.session) {
-        console.log('⚠️  Sem sessão após signup - email pode precisar ser confirmado');
+        // Email pode precisar ser confirmado
         
         // Tentar fazer login para verificar se o email foi confirmado
         const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
@@ -111,19 +109,13 @@ export default function SignupPage() {
         }
 
         user = loginData.user;
-        console.log('✅ Sessão criada após login');
-        console.log('  - user.id:', user.id);
-        console.log('  - session:', !!loginData.session);
+        // Sessão criada após login
       }
 
       // 3. Inserir empresa na tabela empresas (criação básica)
       const slug = slugify(data.companyName);
       
-      console.log('🔍 DEBUG - Criando empresa básica:');
-      console.log('  - user.id:', user.id);
-      console.log('  - user.email:', user.email);
-      console.log('  - nome da empresa:', data.companyName);
-      console.log('  - slug:', slug);
+      // Criando empresa básica
       
       const { error: empresaError } = await supabase
         .from('empresas')
@@ -139,15 +131,14 @@ export default function SignupPage() {
           logo_url: null,
         });
 
-      console.log('🔍 DEBUG - Após criação da empresa:');
-      console.log('  - empresaError:', empresaError);
+      // Verificando criação da empresa
       
       if (empresaError) {
         console.error('❌ Erro detalhado na inserção:', empresaError);
         throw empresaError;
       }
       
-      console.log('✅ Empresa criada com sucesso!');
+      // Empresa criada com sucesso
 
       // 4. Redirecionar para onboarding (opcional)
       router.push('/onboarding/empresa');
