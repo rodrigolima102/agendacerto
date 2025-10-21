@@ -3,12 +3,6 @@
 import type { Theme, SxProps } from '@mui/material/styles';
 import type { ICalendarEvent, ICalendarFilters } from 'src/types/calendar';
 
-import { startTransition } from 'react';
-import Calendar from '@fullcalendar/react';
-import listPlugin from '@fullcalendar/list';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import timeGridPlugin from '@fullcalendar/timegrid';
-import interactionPlugin from '@fullcalendar/interaction';
 import { useBoolean, useSetState } from 'minimal-shared/hooks';
 
 import Box from '@mui/material/Box';
@@ -23,7 +17,7 @@ import { fIsAfter, fIsBetween } from 'src/utils/format-time';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 import { CALENDAR_COLOR_OPTIONS } from 'src/_mock/_calendar';
-import { updateEvent, useGetEvents } from 'src/actions/calendar';
+import { updateEvent, useGetEvents, useGetCalendars } from 'src/actions/calendar';
 
 import { Iconify } from 'src/components/iconify';
 
@@ -33,6 +27,7 @@ import { CalendarForm } from '../calendar-form';
 import { useCalendar } from '../hooks/use-calendar';
 import { CalendarToolbar } from '../calendar-toolbar';
 import { CalendarFilters } from '../calendar-filters';
+import { CustomCalendar } from '../custom-calendar';
 import { CalendarFiltersResult } from '../calendar-filters-result';
 
 // ----------------------------------------------------------------------
@@ -43,8 +38,9 @@ export function CalendarView() {
   const openFilters = useBoolean();
 
   const { events, eventsLoading } = useGetEvents();
+  const { calendars, calendarsLoading } = useGetCalendars();
 
-  const filters = useSetState<ICalendarFilters>({ colors: [], startDate: null, endDate: null });
+  const filters = useSetState<ICalendarFilters>({ colors: [], startDate: null, endDate: null, calendarIds: [] });
   const { state: currentFilters } = filters;
 
   const dateError = fIsAfter(currentFilters.startDate, currentFilters.endDate);
@@ -55,11 +51,8 @@ export function CalendarView() {
     view,
     title,
     /********/
-    onDropEvent,
     onChangeView,
-    onSelectRange,
     onClickEvent,
-    onResizeEvent,
     onDateNavigation,
     /********/
     openForm,
@@ -70,12 +63,18 @@ export function CalendarView() {
     selectedEventId,
     /********/
     onClickEventInFilters,
+    /********/
+    selectedDate,
+    currentMonth,
+    onSelectDate,
   } = useCalendar();
 
   const currentEvent = useEvent(events, selectedEventId, selectedRange, openForm);
 
   const canReset =
-    currentFilters.colors.length > 0 || (!!currentFilters.startDate && !!currentFilters.endDate);
+    currentFilters.colors.length > 0 || 
+    (!!currentFilters.startDate && !!currentFilters.endDate) ||
+    currentFilters.calendarIds.length > 0;
 
   const dataFiltered = applyFilter({
     inputData: events,
@@ -132,6 +131,8 @@ export function CalendarView() {
       onClose={openFilters.onFalse}
       onClickEvent={onClickEventInFilters}
       colorOptions={CALENDAR_COLOR_OPTIONS}
+      calendars={calendars}
+      calendarsLoading={calendarsLoading}
     />
   );
 
@@ -184,39 +185,13 @@ export function CalendarView() {
               ]}
             />
 
-            <Calendar
-              weekends
-              editable
-              droppable
-              selectable
-              allDayMaintainDuration
-              eventResizableFromStart
-              firstDay={1}
-              aspectRatio={3}
-              dayMaxEvents={3}
-              eventMaxStack={2}
-              rerenderDelay={10}
-              headerToolbar={false}
-              eventDisplay="block"
-              ref={calendarRef}
-              initialView={view}
+            <CustomCalendar
+              view={view}
               events={dataFiltered}
-              select={onSelectRange}
-              eventClick={onClickEvent}
-              businessHours={{
-                daysOfWeek: [1, 2, 3, 4, 5], // Mon-Fri
-              }}
-              eventDrop={(arg) => {
-                startTransition(() => {
-                  onDropEvent(arg, updateEvent);
-                });
-              }}
-              eventResize={(arg) => {
-                startTransition(() => {
-                  onResizeEvent(arg, updateEvent);
-                });
-              }}
-              plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]}
+              selectedDate={selectedDate}
+              currentMonth={currentMonth}
+              onSelectDate={onSelectDate}
+              onClickEvent={onClickEvent}
             />
           </CalendarRoot>
         </Card>
@@ -237,11 +212,17 @@ type ApplyFilterProps = {
 };
 
 function applyFilter({ inputData, filters, dateError }: ApplyFilterProps) {
-  const { colors, startDate, endDate } = filters;
+  const { colors, startDate, endDate, calendarIds } = filters;
 
   const stabilizedThis = inputData.map((el, index) => [el, index] as const);
 
   inputData = stabilizedThis.map((el) => el[0]);
+
+  if (calendarIds.length) {
+    inputData = inputData.filter((event) => 
+      event.calendarId && calendarIds.includes(event.calendarId)
+    );
+  }
 
   if (colors.length) {
     inputData = inputData.filter((event) => colors.includes(event.color as string));

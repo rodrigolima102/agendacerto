@@ -419,7 +419,7 @@ export function JwtSignInView() {
                       variant="outlined"
                       size="large"
                       startIcon={<Iconify icon="eva:calendar-fill" />}
-                      onClick={() => router.push('/test/agenda')}
+                      onClick={() => router.push('/dashboard/calendar')}
                       sx={{
                         borderRadius: 2,
                         px: 4,

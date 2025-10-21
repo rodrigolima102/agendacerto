@@ -1,6 +1,6 @@
 import type { UseSetStateReturn } from 'minimal-shared/hooks';
 import type { IDatePickerControl } from 'src/types/common';
-import type { ICalendarEvent, ICalendarFilters } from 'src/types/calendar';
+import type { ICalendarEvent, ICalendarFilters, IGoogleCalendar } from 'src/types/calendar';
 
 import { useCallback } from 'react';
 import { orderBy } from 'es-toolkit';
@@ -10,10 +10,12 @@ import Badge from '@mui/material/Badge';
 import Drawer from '@mui/material/Drawer';
 import Divider from '@mui/material/Divider';
 import Tooltip from '@mui/material/Tooltip';
+import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
+import CircularProgress from '@mui/material/CircularProgress';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 import { fDate, fDateTime } from 'src/utils/format-time';
@@ -33,6 +35,8 @@ type Props = {
   events: ICalendarEvent[];
   onClickEvent: (eventId: string) => void;
   filters: UseSetStateReturn<ICalendarFilters>;
+  calendars: IGoogleCalendar[];
+  calendarsLoading: boolean;
 };
 
 export function CalendarFilters({
@@ -44,6 +48,8 @@ export function CalendarFilters({
   dateError,
   colorOptions,
   onClickEvent,
+  calendars,
+  calendarsLoading,
 }: Props) {
   const { state: currentFilters, setState: updateFilters, resetState: resetFilters } = filters;
 
@@ -66,6 +72,18 @@ export function CalendarFilters({
       updateFilters({ endDate: newValue });
     },
     [updateFilters]
+  );
+
+  const handleToggleCalendar = useCallback(
+    (calendarId: string) => {
+      const currentIds = currentFilters.calendarIds;
+      const newIds = currentIds.includes(calendarId)
+        ? currentIds.filter((id) => id !== calendarId)
+        : [...currentIds, calendarId];
+      
+      updateFilters({ calendarIds: newIds });
+    },
+    [currentFilters.calendarIds, updateFilters]
   );
 
   const renderHead = () => (
@@ -154,6 +172,77 @@ export function CalendarFilters({
     </Box>
   );
 
+  const renderCalendars = () => (
+    <Box
+      sx={{
+        mb: 3,
+        px: 2.5,
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
+      <Typography variant="subtitle2" sx={{ mb: 1.5 }}>
+        Calendars {calendarsLoading && <CircularProgress size={16} sx={{ ml: 1 }} />}
+      </Typography>
+
+      {calendarsLoading ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
+          <CircularProgress size={24} />
+        </Box>
+      ) : calendars.length === 0 ? (
+        <Typography variant="body2" sx={{ color: 'text.secondary', py: 1 }}>
+          No calendars available
+        </Typography>
+      ) : (
+        <Box component="ul" sx={{ p: 0, m: 0 }}>
+          {calendars.map((calendar) => (
+            <ListItemButton
+              key={calendar.id}
+              onClick={() => handleToggleCalendar(calendar.id)}
+              sx={{ 
+                py: 1,
+                px: 1.5,
+                borderRadius: 1,
+                mb: 0.5,
+              }}
+            >
+              <Box
+                sx={{
+                  width: 16,
+                  height: 16,
+                  borderRadius: '50%',
+                  backgroundColor: calendar.backgroundColor,
+                  mr: 1.5,
+                  flexShrink: 0,
+                }}
+              />
+              <ListItemText
+                primary={calendar.summary}
+                secondary={calendar.primary ? 'Primary' : null}
+                slotProps={{
+                  primary: {
+                    sx: { 
+                      typography: 'body2',
+                      fontWeight: calendar.primary ? 600 : 400,
+                    },
+                  },
+                  secondary: {
+                    sx: { typography: 'caption' },
+                  },
+                }}
+              />
+              <Checkbox
+                size="small"
+                checked={currentFilters.calendarIds.includes(calendar.id)}
+                sx={{ p: 0 }}
+              />
+            </ListItemButton>
+          ))}
+        </Box>
+      )}
+    </Box>
+  );
+
   const renderEvents = () => (
     <>
       <Typography variant="subtitle2" sx={{ px: 2.5, mb: 1 }}>
@@ -217,6 +306,7 @@ export function CalendarFilters({
       {renderHead()}
 
       <Scrollbar>
+        {renderCalendars()}
         {renderColors()}
         {renderDateRange()}
         {renderEvents()}

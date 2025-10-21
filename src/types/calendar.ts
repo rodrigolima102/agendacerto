@@ -6,6 +6,17 @@ export type ICalendarFilters = {
   colors: string[];
   startDate: IDatePickerControl;
   endDate: IDatePickerControl;
+  calendarIds: string[];
+};
+
+export type IGoogleCalendar = {
+  id: string;
+  summary: string;
+  description: string;
+  primary: boolean;
+  accessRole: string;
+  backgroundColor: string;
+  foregroundColor: string;
 };
 
 export type ICalendarDate = string | number;
@@ -23,6 +34,7 @@ export type ICalendarEvent = {
   description: string;
   end: ICalendarDate;
   start: ICalendarDate;
+  calendarId?: string;
 };
 
 export type ListView = 'list' | 'listDay' | 'listWeek' | 'listMonth' | 'listYear';

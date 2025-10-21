@@ -42,9 +42,9 @@ export const CONFIG: ConfigValue = {
    * @method jwt | amplify | firebase | supabase | auth0
    */
   auth: {
-    method: 'supabase',
+    method: 'jwt',
     skip: false,
-    redirectPath: paths.dashboard.root,
+    redirectPath: paths.auth.jwt.signIn,
   },
   /**
    * Firebase

@@ -133,7 +133,7 @@ export function SupabaseSignInView() {
         title="Sign in to your account"
         description={
           <>
-            {`Don’t have an account? `}
+            {`Don't have an account? `}
             <Link component={RouterLink} href={paths.auth.supabase.signUp} variant="subtitle2">
               Get started
             </Link>

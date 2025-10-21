@@ -17,13 +17,47 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url);
-    const calendarId = searchParams.get('calendarId') || 'primary';
-    const timeMin = searchParams.get('timeMin') || new Date().toISOString();
-    const timeMax = searchParams.get('timeMax') || new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+    const specificCalendarId = searchParams.get('calendarId');
+    const timeMin = searchParams.get('timeMin') || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(); // 30 dias atrás
+    const timeMax = searchParams.get('timeMax') || new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(); // 90 dias à frente
 
-    // Fazer requisição para Google Calendar API
-    const response = await fetch(
-      `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events?timeMin=${timeMin}&timeMax=${timeMax}&singleEvents=true&orderBy=startTime`,
+    // Se um calendário específico foi solicitado, buscar apenas dele
+    if (specificCalendarId) {
+      const response = await fetch(
+        `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(specificCalendarId)}/events?timeMin=${timeMin}&timeMax=${timeMax}&singleEvents=true&orderBy=startTime`,
+        {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Google Calendar API error:', errorData);
+        return NextResponse.json(
+          { message: 'Failed to fetch events', details: errorData },
+          { status: response.status }
+        );
+      }
+
+      const data = await response.json();
+      const eventsWithCalendarId = (data.items || []).map((event: any) => ({
+        ...event,
+        calendarId: specificCalendarId,
+      }));
+
+      return NextResponse.json({
+        success: true,
+        events: eventsWithCalendarId,
+        nextPageToken: data.nextPageToken,
+      });
+    }
+
+    // Buscar lista de calendários
+    const calendarsResponse = await fetch(
+      'https://www.googleapis.com/calendar/v3/users/me/calendarList',
       {
         headers: {
           'Authorization': `Bearer ${accessToken}`,
@@ -32,34 +66,61 @@ export async function GET(request: NextRequest) {
       }
     );
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error('Google Calendar API error:', {
-        status: response.status,
-        statusText: response.statusText,
-        error: errorData
-      });
-      
-      let errorMessage = 'Failed to fetch events from Google Calendar';
-      if (response.status === 401) {
-        errorMessage = 'Token expirado ou inválido. Faça login novamente.';
-      } else if (response.status === 403) {
-        errorMessage = 'Sem permissão para acessar o calendário.';
-      } else if (response.status === 404) {
-        errorMessage = 'Calendário não encontrado.';
-      }
-      
+    if (!calendarsResponse.ok) {
+      const errorData = await calendarsResponse.json();
+      console.error('Error fetching calendars:', errorData);
       return NextResponse.json(
-        { message: errorMessage, details: errorData },
-        { status: response.status }
+        { message: 'Failed to fetch calendars', details: errorData },
+        { status: calendarsResponse.status }
       );
     }
 
-    const data = await response.json();
+    const calendarsData = await calendarsResponse.json();
+    const calendars = calendarsData.items || [];
+
+    // Buscar eventos de todos os calendários em paralelo
+    const eventPromises = calendars.map(async (calendar: any) => {
+      try {
+        const response = await fetch(
+          `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendar.id)}/events?timeMin=${timeMin}&timeMax=${timeMax}&singleEvents=true&orderBy=startTime`,
+          {
+            headers: {
+              'Authorization': `Bearer ${accessToken}`,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+
+        if (!response.ok) {
+          console.error(`Error fetching events from calendar ${calendar.id}`);
+          return [];
+        }
+
+        const data = await response.json();
+        // Adicionar calendarId e cor do calendário a cada evento
+        return (data.items || []).map((event: any) => ({
+          id: event.id,
+          title: event.summary || 'No title',
+          description: event.description || '',
+          start: event.start?.dateTime || event.start?.date,
+          end: event.end?.dateTime || event.end?.date,
+          allDay: !event.start?.dateTime,
+          color: calendar.backgroundColor || '#4285f4',
+          calendarId: calendar.id,
+          calendarName: calendar.summary,
+        }));
+      } catch (error) {
+        console.error(`Error fetching events from calendar ${calendar.id}:`, error);
+        return [];
+      }
+    });
+
+    const eventsArrays = await Promise.all(eventPromises);
+    const allEvents = eventsArrays.flat();
+
     return NextResponse.json({
       success: true,
-      events: data.items || [],
-      nextPageToken: data.nextPageToken,
+      events: allEvents,
     });
 
   } catch (error) {

@@ -1,5 +1,5 @@
 import type { SWRConfiguration } from 'swr';
-import type { ICalendarEvent } from 'src/types/calendar';
+import type { ICalendarEvent, IGoogleCalendar } from 'src/types/calendar';
 
 import { useMemo } from 'react';
 import useSWR, { mutate } from 'swr';
@@ -47,7 +47,17 @@ export function useGetEvents() {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
       
-      return res.json();
+      const data = await res.json();
+      
+      // Garantir que todos os eventos tenham calendarId
+      if (data.events) {
+        data.events = data.events.map((event: any) => ({
+          ...event,
+          calendarId: event.calendarId || event.organizer?.email || 'primary',
+        }));
+      }
+      
+      return data;
     }
     
     // Fallback para fetcher normal se não houver token
@@ -73,6 +83,55 @@ export function useGetEvents() {
       eventsEmpty: !isLoading && !isValidating && !data?.events.length,
     };
   }, [data?.events, error, isLoading, isValidating]);
+
+  return memoizedValue;
+}
+
+// ----------------------------------------------------------------------
+
+type CalendarsData = {
+  success: boolean;
+  calendars: IGoogleCalendar[];
+};
+
+export function useGetCalendars() {
+  const tokens = googleAuthService.getTokens();
+  const hasGoogleToken = !!tokens?.access_token;
+
+  const fetchCalendars = async (url: string) => {
+    if (!hasGoogleToken || !tokens?.access_token) {
+      return { success: false, calendars: [] };
+    }
+
+    const res = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${tokens.access_token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+    
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+    
+    return res.json();
+  };
+
+  const { data, isLoading, error, isValidating } = useSWR<CalendarsData>(
+    hasGoogleToken ? `${CALENDAR_ENDPOINT}/list-calendars` : null,
+    fetchCalendars,
+    {
+      ...swrOptions,
+      revalidateOnFocus: false, // Não revalidar ao focar - calendários não mudam com frequência
+    }
+  );
+
+  const memoizedValue = useMemo(() => ({
+    calendars: data?.calendars || [],
+    calendarsLoading: isLoading,
+    calendarsError: error,
+    calendarsValidating: isValidating,
+  }), [data?.calendars, error, isLoading, isValidating]);
 
   return memoizedValue;
 }
