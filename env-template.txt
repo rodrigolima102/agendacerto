@@ -1,0 +1,8 @@
+# Copie este conteúdo para um arquivo .env.local na raiz do projeto
+
+NEXT_PUBLIC_SUPABASE_URL=https://tqsibusymtsvpihnyieo.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_yCnml2-JPc_uySkMiSasMg_eUKbMzhl
+
+N8N_API_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL25jLWFnZW5kYS1jZXJ0by5vbmRldi5jb20iLCJzdWIiOiJhZG1pbiIsImF1ZCI6Imh0dHBzOi8vbmMtYWdlbmRhLWNlcnRvLm9uZGV2LmNvbSIsImV4cCI6MTczNzQ5NzYwMCwiaWF0IjoxNzM3NDk0MDAwLCJqdGkiOiIxMjM0NTY3ODkwIn0.example
+
+NEXT_PUBLIC_APP_URL=http://localhost:8082

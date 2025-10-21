@@ -1,11 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 
-// Configuração do Supabase usando variáveis de ambiente
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase configuration. Please check your environment variables.')
-}
+// Configuração do Supabase - hardcoded para páginas estáticas
+const supabaseUrl = 'https://tqsibusymtsvpihnyieo.supabase.co'
+const supabaseAnonKey = 'sb_publishable_yCnml2-JPc_uySkMiSasMg_eUKbMzhl'
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
