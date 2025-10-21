@@ -22,8 +22,8 @@
 
 | Nome da Variável | Valor | Ambiente |
 |------------------|-------|----------|
-| `NEXT_PUBLIC_GOOGLE_CLIENT_ID` | `1005292864367-ins3o5uel2istn3gmg37vrqv63t05lbj.apps.googleusercontent.com` | Production, Preview, Development |
-| `GOOGLE_CLIENT_SECRET` | `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` | Production, Preview, Development |
+| `NEXT_PUBLIC_GOOGLE_CLIENT_ID` | `[SEU_GOOGLE_CLIENT_ID].apps.googleusercontent.com` | Production, Preview, Development |
+| `GOOGLE_CLIENT_SECRET` | `GOCSPX-[SEU_CLIENT_SECRET]` | Production, Preview, Development |
 
 #### N8N (opcional):
 
