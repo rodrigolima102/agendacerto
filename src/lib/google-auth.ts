@@ -3,7 +3,7 @@ import type { GoogleAuthTokens, GoogleCalendarEvent, GoogleCalendarListResponse,
 // ----------------------------------------------------------------------
 
 export const GOOGLE_CONFIG = {
-  clientId: process.env.GOOGLE_CLIENT_ID || '',
+  clientId: process.env.GOOGLE_CLIENT_ID || 'your_google_client_id_here',
   scope: 'https://www.googleapis.com/auth/calendar',
   accessType: 'offline',
   prompt: 'consent',
