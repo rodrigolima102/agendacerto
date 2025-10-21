@@ -3,12 +3,12 @@ import type { GoogleAuthTokens, GoogleCalendarEvent, GoogleCalendarListResponse,
 // ----------------------------------------------------------------------
 
 export const GOOGLE_CONFIG = {
-  clientId: process.env.GOOGLE_CLIENT_ID || 'your_google_client_id_here',
+  clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '',
   scope: 'https://www.googleapis.com/auth/calendar',
   accessType: 'offline',
   prompt: 'consent',
-  redirectUri: process.env.NEXT_PUBLIC_APP_URL 
-    ? `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/callback/google`
+  redirectUri: typeof window !== 'undefined' 
+    ? `${window.location.origin}/api/auth/callback/google`
     : 'http://localhost:8082/api/auth/callback/google',
 } as const;
 
@@ -31,6 +31,13 @@ export class GoogleAuthService {
    * Inicia o fluxo OAuth com PKCE
    */
   async initiateOAuth(): Promise<string> {
+    // Validar se as credenciais estão configuradas
+    if (!GOOGLE_CONFIG.clientId) {
+      throw new Error(
+        'Google OAuth não configurado. Por favor, configure NEXT_PUBLIC_GOOGLE_CLIENT_ID e GOOGLE_CLIENT_SECRET nas variáveis de ambiente.'
+      );
+    }
+
     const codeVerifier = this.generateCodeVerifier();
     const codeChallenge = await this.generateCodeChallenge(codeVerifier);
     
