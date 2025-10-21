@@ -7,7 +7,9 @@ export const GOOGLE_CONFIG = {
   scope: 'https://www.googleapis.com/auth/calendar',
   accessType: 'offline',
   prompt: 'consent',
-  redirectUri: 'http://localhost:8082/api/auth/callback/google',
+  redirectUri: process.env.NEXT_PUBLIC_APP_URL 
+    ? `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/callback/google`
+    : 'http://localhost:8082/api/auth/callback/google',
 } as const;
 
 // ----------------------------------------------------------------------
