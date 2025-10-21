@@ -5,6 +5,7 @@ import { useMemo } from 'react';
 import useSWR, { mutate } from 'swr';
 
 import axios, { fetcher, endpoints } from 'src/lib/axios';
+import { googleAuthService } from 'src/lib/google-auth';
 
 // ----------------------------------------------------------------------
 
@@ -25,9 +26,41 @@ type EventsData = {
 };
 
 export function useGetEvents() {
-  const { data, isLoading, error, isValidating } = useSWR<EventsData>(CALENDAR_ENDPOINT, fetcher, {
-    ...swrOptions,
-  });
+  // Verificar se há token do Google disponível
+  const tokens = googleAuthService.getTokens();
+  const hasGoogleToken = !!tokens?.access_token;
+
+  // Usar endpoint diferente baseado na disponibilidade do token
+  const endpoint = hasGoogleToken ? `${CALENDAR_ENDPOINT}/list` : CALENDAR_ENDPOINT;
+  
+  // Configurar headers com token se disponível
+  const fetcherWithAuth = async (url: string) => {
+    if (hasGoogleToken && tokens?.access_token) {
+      const res = await fetch(url, {
+        headers: {
+          'Authorization': `Bearer ${tokens.access_token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+      
+      return res.json();
+    }
+    
+    // Fallback para fetcher normal se não houver token
+    return fetcher(url);
+  };
+
+  const { data, isLoading, error, isValidating } = useSWR<EventsData>(
+    hasGoogleToken ? endpoint : null, // Só fazer requisição se houver token
+    fetcherWithAuth,
+    {
+      ...swrOptions,
+    }
+  );
 
   const memoizedValue = useMemo(() => {
     const events = data?.events.map((event) => ({ ...event, textColor: event.color }));
