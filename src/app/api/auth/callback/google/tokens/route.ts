@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Configuração do Google OAuth
-    const clientId = process.env.GOOGLE_CLIENT_ID;
+    const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
     const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
 
     if (!clientId || !clientSecret) {
