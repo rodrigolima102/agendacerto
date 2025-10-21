@@ -26,13 +26,13 @@ export default function GoogleCallbackPage() {
 
         if (error) {
           console.error('OAuth error:', error);
-          router.push('/dashboard/calendar?error=oauth_error');
+          router.push('/auth/jwt/sign-in?error=oauth_error');
           return;
         }
 
         if (!code) {
           console.error('No authorization code found');
-          router.push('/dashboard/calendar?error=no_code');
+          router.push('/auth/jwt/sign-in?error=no_code');
           return;
         }
 
@@ -47,7 +47,7 @@ export default function GoogleCallbackPage() {
 
       } catch (error) {
         console.error('Error processing Google callback:', error);
-        router.push('/dashboard/calendar?error=callback_error');
+        router.push('/auth/jwt/sign-in?error=callback_error');
       }
     };
 
