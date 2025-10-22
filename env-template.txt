@@ -1,0 +1,18 @@
+# Copie este conteúdo para um arquivo .env.local na raiz do projeto
+
+# Supabase Configuration
+NEXT_PUBLIC_SUPABASE_URL=https://tqsibusymtsvpihnyieo.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRxc2lidXN5bXRzdnBpaG55aWVvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA4OTM5MDUsImV4cCI6MjA3NjQ2OTkwNX0.So7QymisJXxTqb-w2lx1_8NSvKrxFcnSEdxIL8SrfdU
+
+# Google OAuth Configuration (OBRIGATÓRIO para o calendário funcionar)
+# IMPORTANTE: Obtenha estas credenciais no Google Cloud Console
+# Veja: GOOGLE_OAUTH_SETUP.md para instruções detalhadas
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=seu_google_client_id_aqui.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=GOCSPX-seu_client_secret_aqui
+
+# N8N API Configuration
+N8N_API_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZDNmNGVmYi1jMTAwLTQzYzktYjA5My05YWJmOWJhZWEwYWYiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzYwOTM4MjY4fQ.Jn5LPpRPzK84RgYDc2MMTVH9KO1J_NQ4jb9PJYy3g-c
+N8N_BASE_URL=https://rodrigolima102.app.n8n.cloud
+
+# App Configuration
+NEXT_PUBLIC_APP_URL=http://localhost:8082

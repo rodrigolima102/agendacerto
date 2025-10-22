@@ -89,6 +89,7 @@
     "minimal-shared": "^1.1.0",
     "mui-one-time-password-input": "^5.0.0",
     "next": "^15.5.4",
+    "next-auth": "^4.24.11",
     "nprogress": "^0.2.0",
     "react": "^19.1.1",
     "react-apexcharts": "^1.7.0",

@@ -440,7 +440,7 @@ export function JwtSignInView() {
                       variant="contained"
                       size="large"
                       startIcon={<Iconify icon="eva:grid-fill" />}
-                      onClick={() => router.push('/test/calendar')}
+                      onClick={() => router.push('/test/agenda')}
                       sx={{
                         borderRadius: 2,
                         px: 4,
