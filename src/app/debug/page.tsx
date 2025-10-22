@@ -6,28 +6,52 @@ import Typography from '@mui/material/Typography';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Alert from '@mui/material/Alert';
+import CircularProgress from '@mui/material/CircularProgress';
 
 export default function DebugPage() {
   const [envVars, setEnvVars] = useState<any>({});
-  const [isProduction, setIsProduction] = useState(false);
+  const [environment, setEnvironment] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const isProd = process.env.NODE_ENV === 'production';
-    setIsProduction(isProd);
-    
-    setEnvVars({
-      NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL || 'NÃO DEFINIDA',
-      NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? 'DEFINIDA' : 'NÃO DEFINIDA',
-      NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL || 'NÃO DEFINIDA',
-      NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || 'NÃO DEFINIDA',
-    });
+    const fetchEnvVars = async () => {
+      try {
+        const response = await fetch('/api/debug/env');
+        
+        if (!response.ok) {
+          setError('Erro ao carregar variáveis de ambiente');
+          setIsLoading(false);
+          return;
+        }
+
+        const data = await response.json();
+        setEnvironment(data.environment || 'unknown');
+        setEnvVars(data.variables || {});
+      } catch (err) {
+        setError('Erro ao conectar com a API');
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchEnvVars();
   }, []);
 
-  if (isProduction) {
+  if (isLoading) {
+    return (
+      <Box sx={{ p: 4, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (error) {
     return (
       <Box sx={{ p: 4 }}>
         <Alert severity="error">
-          Esta página só está disponível em ambiente de desenvolvimento.
+          {error}
         </Alert>
       </Box>
     );
@@ -39,17 +63,40 @@ export default function DebugPage() {
         Debug - Variáveis de Ambiente
       </Typography>
       
+      <Alert severity={environment === 'production' ? 'warning' : 'info'} sx={{ mb: 2 }}>
+        <strong>Ambiente:</strong> {environment.toUpperCase()}
+      </Alert>
+      
       <Card sx={{ mb: 2 }}>
         <CardContent>
           <Typography variant="h6" gutterBottom>
             Status das Variáveis de Ambiente:
           </Typography>
           
-          {Object.entries(envVars).map(([key, value]) => (
-            <Typography key={key} variant="body2" sx={{ mb: 1 }}>
-              <strong>{key}:</strong> {String(value)}
-            </Typography>
-          ))}
+          {Object.entries(envVars).map(([key, value]) => {
+            const isNotDefined = String(value).includes('NÃO DEFINIDA');
+            return (
+              <Box 
+                key={key} 
+                sx={{ 
+                  mb: 1, 
+                  p: 1, 
+                  borderRadius: 1,
+                  bgcolor: isNotDefined ? 'error.lighter' : 'success.lighter'
+                }}
+              >
+                <Typography variant="body2">
+                  <strong>{key}:</strong>{' '}
+                  <span style={{ 
+                    color: isNotDefined ? '#d32f2f' : '#2e7d32',
+                    fontFamily: 'monospace'
+                  }}>
+                    {String(value)}
+                  </span>
+                </Typography>
+              </Box>
+            );
+          })}
         </CardContent>
       </Card>
 
@@ -57,9 +104,11 @@ export default function DebugPage() {
         Esta página ajuda a verificar se as variáveis de ambiente estão sendo carregadas corretamente.
       </Alert>
       
-      <Alert severity="warning" sx={{ mt: 2 }}>
-        ⚠️ Esta página está disponível apenas em desenvolvimento por questões de segurança.
-      </Alert>
+      {environment === 'development' && (
+        <Alert severity="warning" sx={{ mt: 2 }}>
+          ⚠️ Variáveis sensíveis (secrets) são ocultadas por segurança, mesmo em desenvolvimento.
+        </Alert>
+      )}
     </Box>
   );
 }
