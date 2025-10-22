@@ -42,9 +42,9 @@ export default function GoogleCallbackPage() {
         const tokens = await googleAuthService.exchangeCodeForTokens(code);
 
         // 🔍 DEBUG: Verificar resposta do Google OAuth
-        console.log('🔍 Google OAuth Response:', tokens);
-        console.log('🔍 Access Token:', tokens.access_token);
-        console.log('🔍 Credential:', tokens.credential);
+        console.log('🔍 Google OAuth Response received');
+        console.log('🔍 Access Token length:', tokens.access_token?.length || 0);
+        console.log('🔍 Credential length:', tokens.credential?.length || 0);
         console.log('🔍 Token Type:', tokens.token_type);
         console.log('🔍 Expires In:', tokens.expires_in);
 
@@ -67,10 +67,10 @@ export default function GoogleCallbackPage() {
               // 🔍 DEBUG: Verificar se access_token existe
               if (!tokens.access_token) {
                 console.log('⚠️ Access Token está vazio!');
-                console.log('🔍 Credential disponível:', tokens.credential);
+                console.log('🔍 Credential disponível:', !!tokens.credential);
                 console.log('🔍 Todos os campos do token:', Object.keys(tokens));
               } else {
-                console.log('✅ Access Token encontrado:', tokens.access_token.substring(0, 20) + '...');
+                console.log('✅ Access Token encontrado, length:', tokens.access_token.length);
               }
 
               console.log('🚀 Enviando dados para webhook N8N...');
@@ -84,7 +84,7 @@ export default function GoogleCallbackPage() {
               // Salvar resposta no localStorage para exibir na página
               localStorage.setItem('n8n_calendars', JSON.stringify(calendarsData));
               
-              console.log('✅ Agendas recebidas do N8N:', calendarsData);
+              console.log('✅ Agendas recebidas do N8N, count:', calendarsData?.calendars?.length || 0);
             }
           }
         } catch (n8nError) {

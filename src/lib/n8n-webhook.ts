@@ -11,8 +11,8 @@ export async function sendGoogleConnectionToN8N(
     const apiUrl = '/api/n8n/google-connect';
 
     console.log('🚀 [Client] Enviando dados via API route...');
-    console.log('   CompanyId:', companyId);
-    console.log('   Token (primeiros 20 chars):', googleAccessToken.substring(0, 20) + '...');
+    console.log('   CompanyId:', companyId.substring(0, 8) + '...');
+    console.log('   Token length:', googleAccessToken.length);
 
     const response = await fetch(apiUrl, {
       method: 'POST',
@@ -32,7 +32,7 @@ export async function sendGoogleConnectionToN8N(
 
     const data = await response.json();
     
-    console.log('📅 [Client] Resposta do webhook N8N:', data);
+    console.log('📅 [Client] Resposta recebida com sucesso');
     
     return data;
   } catch (error) {

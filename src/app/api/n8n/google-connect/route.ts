@@ -12,8 +12,8 @@ export async function POST(request: NextRequest) {
     }
 
     console.log('🚀 [API Route] Enviando dados para webhook N8N...');
-    console.log('   CompanyId:', companyId);
-    console.log('   Token (primeiros 20 chars):', googleAccessToken.substring(0, 20) + '...');
+    console.log('   CompanyId:', companyId.substring(0, 8) + '...');
+    console.log('   Token length:', googleAccessToken.length);
 
     const response = await fetch('https://rodrigolima102.app.n8n.cloud/webhook/3c817931-bb7c-482c-af62-bf407db639c3', {
       method: 'POST',
@@ -28,8 +28,8 @@ export async function POST(request: NextRequest) {
 
     // Tentar ler a resposta como texto primeiro
     const responseText = await response.text();
-    console.log('📅 [API Route] Resposta bruta do N8N:', responseText);
     console.log('📅 [API Route] Status:', response.status);
+    console.log('📅 [API Route] Response length:', responseText.length);
 
     let data;
     try {
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log('📅 [API Route] Resposta parseada do webhook N8N:', data);
+    console.log('📅 [API Route] Resposta parseada com sucesso');
 
     return NextResponse.json(data);
   } catch (error) {
