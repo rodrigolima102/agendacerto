@@ -8,8 +8,8 @@ export const GOOGLE_CONFIG = {
   accessType: 'offline',
   prompt: 'consent',
   redirectUri: typeof window !== 'undefined' 
-    ? `${window.location.origin}/api/auth/callback/google`
-    : 'http://localhost:8082/api/auth/callback/google',
+    ? `${window.location.origin}/api/google/callback`
+    : 'http://localhost:8082/api/google/callback',
 } as const;
 
 // ----------------------------------------------------------------------
