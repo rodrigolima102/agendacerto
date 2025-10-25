@@ -81,9 +81,20 @@ export async function GET(request: NextRequest) {
     const tokens: GoogleTokenResponse = await tokenResponse.json();
 
     console.log('✅ [Auth Callback] Tokens recebidos do Google');
-    console.log('  - access_token: Presente');
-    console.log('  - refresh_token:', tokens.refresh_token ? 'Presente ✅' : 'Ausente');
+    console.log('  - access_token:', tokens.access_token ? 'Presente' : 'Ausente');
+    console.log('  - refresh_token:', tokens.refresh_token ? 'Presente ✅' : 'AUSENTE ❌');
     console.log('  - expires_in:', tokens.expires_in, 's');
+    console.log('  - token_type:', tokens.token_type);
+    console.log('  - scope:', tokens.scope);
+    
+    // Se não recebeu refresh_token, logar alerta
+    if (!tokens.refresh_token) {
+      console.warn('⚠️ [Auth Callback] REFRESH TOKEN NÃO FOI RETORNADO PELO GOOGLE!');
+      console.warn('   Isso pode acontecer se:');
+      console.warn('   1. O usuário já autorizou este app antes');
+      console.warn('   2. Solução: Revogar acesso em https://myaccount.google.com/permissions');
+      console.warn('   3. Ou esperar que o prompt=consent force novo consentimento');
+    }
 
     // Salvar tokens em cookie para o frontend processar e chamar N8N
     cookieStore.set('google_tokens_temp', JSON.stringify({
