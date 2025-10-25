@@ -115,34 +115,29 @@ export async function GET(request: NextRequest) {
       path: '/',
     });
 
-    // Tentar chamar N8N webhook (não crítico)
+    // Chamar N8N webhook diretamente (não crítico)
     try {
       console.log('🚀 [Google Callback] Chamando webhook N8N...');
       
-      // Buscar company_id do usuário autenticado
-      const allCookies = cookieStore.getAll();
-      const supabaseAuthCookie = allCookies.find(
-        (cookie) => cookie.name.includes('sb-') && cookie.name.includes('auth-token')
-      );
+      const n8nWebhookUrl = 'https://rodrigolima102.app.n8n.cloud/webhook/3c817931-bb7c-482c-af62-bf407db639c3';
+      
+      const n8nResponse = await fetch(n8nWebhookUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          googleAccessToken: tokens.access_token,
+        }),
+      });
 
-      if (supabaseAuthCookie) {
-        // Fazer requisição interna para o endpoint N8N
-        const n8nResponse = await fetch(`${request.nextUrl.origin}/api/n8n/google-connect`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Cookie': `${supabaseAuthCookie.name}=${supabaseAuthCookie.value}`,
-          },
-          body: JSON.stringify({
-            googleAccessToken: tokens.access_token,
-          }),
-        });
+      console.log('📅 [Google Callback] N8N Status:', n8nResponse.status);
 
-        if (n8nResponse.ok) {
-          console.log('✅ [Google Callback] Webhook N8N chamado com sucesso');
-        } else {
-          console.warn('⚠️ [Google Callback] Webhook N8N retornou erro (não crítico)');
-        }
+      if (n8nResponse.ok) {
+        const n8nData = await n8nResponse.text();
+        console.log('✅ [Google Callback] Webhook N8N respondeu:', n8nData.substring(0, 100));
+      } else {
+        console.warn('⚠️ [Google Callback] Webhook N8N retornou erro (não crítico):', n8nResponse.status);
       }
     } catch (n8nError) {
       console.warn('⚠️ [Google Callback] Erro ao chamar N8N (não crítico):', n8nError);

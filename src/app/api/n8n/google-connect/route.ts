@@ -2,13 +2,25 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {
-    const { companyId, googleAccessToken } = await request.json();
+    const body = await request.json();
+    const googleAccessToken = body.googleAccessToken;
+    let companyId = body.companyId;
 
-    if (!companyId || !googleAccessToken) {
+    if (!googleAccessToken) {
       return NextResponse.json(
-        { error: 'companyId e googleAccessToken são obrigatórios' },
+        { error: 'googleAccessToken é obrigatório' },
         { status: 400 }
       );
+    }
+
+    // Se companyId não foi fornecido, buscar do usuário autenticado
+    if (!companyId) {
+      // TODO: Buscar companyId do cookie de autenticação
+      console.log('⚠️ [N8N API] companyId não fornecido, pulando chamada ao N8N');
+      return NextResponse.json({
+        success: false,
+        message: 'companyId não fornecido'
+      });
     }
 
     console.log('🚀 [API Route] Enviando dados para webhook N8N...');

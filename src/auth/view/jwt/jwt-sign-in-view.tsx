@@ -108,8 +108,8 @@ export function JwtSignInView() {
       setIsConnecting(true);
       setError('');
 
-      const authUrl = await googleAuthService.initiateOAuth();
-      window.location.href = authUrl;
+      // Usar rota de OAuth com state (CSRF protection)
+      window.location.href = '/api/google/auth';
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Falha ao conectar com Google';
       setError(errorMessage);
