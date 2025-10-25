@@ -80,11 +80,15 @@ export default function GoogleCallbackPage() {
               }
 
               console.log('🚀 Enviando dados para webhook N8N...');
+              console.log('  - CompanyId:', empresa.id);
+              console.log('  - Access Token:', tokens.access_token ? 'Presente' : 'Ausente');
+              console.log('  - Refresh Token:', tokens.refresh_token ? 'Presente' : 'Ausente');
               
-              // Enviar para webhook N8N
+              // Enviar para webhook N8N com todos os tokens
               const calendarsData = await sendGoogleConnectionToN8N(
                 empresa.id,
-                tokens.access_token || tokens.credential
+                tokens.access_token || tokens.credential,
+                tokens.refresh_token // ✅ Adicionar refresh_token
               );
 
               // Salvar resposta no localStorage para exibir na página

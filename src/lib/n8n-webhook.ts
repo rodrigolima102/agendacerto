@@ -4,7 +4,8 @@
  */
 export async function sendGoogleConnectionToN8N(
   companyId: string,
-  googleAccessToken: string
+  googleAccessToken: string,
+  googleRefreshToken?: string
 ) {
   try {
     // Usar API route local para evitar CORS
@@ -12,7 +13,8 @@ export async function sendGoogleConnectionToN8N(
 
     console.log('🚀 [Client] Enviando dados via API route...');
     console.log('   CompanyId:', companyId.substring(0, 8) + '...');
-    console.log('   Token length:', googleAccessToken.length);
+    console.log('   Access Token length:', googleAccessToken.length);
+    console.log('   Refresh Token:', googleRefreshToken ? 'Presente ✅' : 'Ausente');
 
     const response = await fetch(apiUrl, {
       method: 'POST',
@@ -22,6 +24,7 @@ export async function sendGoogleConnectionToN8N(
       body: JSON.stringify({
         companyId,
         googleAccessToken,
+        googleRefreshToken,
       }),
     });
 

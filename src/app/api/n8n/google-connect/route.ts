@@ -4,6 +4,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const googleAccessToken = body.googleAccessToken;
+    const googleRefreshToken = body.googleRefreshToken;
     let companyId = body.companyId;
 
     if (!googleAccessToken) {
@@ -25,7 +26,8 @@ export async function POST(request: NextRequest) {
 
     console.log('🚀 [API Route] Enviando dados para webhook N8N...');
     console.log('   CompanyId:', companyId.substring(0, 8) + '...');
-    console.log('   Token length:', googleAccessToken.length);
+    console.log('   Access Token length:', googleAccessToken.length);
+    console.log('   Refresh Token:', googleRefreshToken ? 'Presente ✅' : 'Ausente');
 
     const response = await fetch('https://rodrigolima102.app.n8n.cloud/webhook/3c817931-bb7c-482c-af62-bf407db639c3', {
       method: 'POST',
@@ -35,6 +37,7 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify({
         companyId,
         googleAccessToken,
+        googleRefreshToken, // ✅ Incluir refresh_token
       }),
     });
 
