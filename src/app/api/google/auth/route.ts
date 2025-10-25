@@ -12,7 +12,7 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: NextRequest) {
   try {
     const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
-    const redirectUri = `${request.nextUrl.origin}/api/google/callback`;
+    const redirectUri = `${request.nextUrl.origin}/api/auth/callback/google`;
     
     if (!clientId) {
       return NextResponse.json(
