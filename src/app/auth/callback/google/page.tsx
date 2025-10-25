@@ -23,7 +23,6 @@ export default function GoogleCallbackPage() {
   useEffect(() => {
     const handleCallback = async () => {
       try {
-        const code = searchParams.get('code');
         const error = searchParams.get('error');
 
         if (error) {
@@ -32,21 +31,28 @@ export default function GoogleCallbackPage() {
           return;
         }
 
-        if (!code) {
-          console.error('No authorization code found');
-          router.push('/auth/jwt/sign-in?error=no_code');
+        // Ler tokens do cookie (já trocados no servidor)
+        const cookieValue = document.cookie
+          .split('; ')
+          .find(row => row.startsWith('google_tokens_temp='))
+          ?.split('=')[1];
+
+        if (!cookieValue) {
+          console.error('No tokens found in cookie');
+          router.push('/auth/jwt/sign-in?error=no_tokens');
           return;
         }
 
-        // Troca o código por tokens
-        const tokens = await googleAuthService.exchangeCodeForTokens(code);
+        const tokens = JSON.parse(decodeURIComponent(cookieValue));
+        
+        console.log('✅ Tokens recebidos do servidor via cookie');
 
         // 🔍 DEBUG: Verificar resposta do Google OAuth
         console.log('🔍 Google OAuth Response received');
         console.log('🔍 Access Token length:', tokens.access_token?.length || 0);
-        console.log('🔍 Credential length:', tokens.credential?.length || 0);
-        console.log('🔍 Token Type:', tokens.token_type);
+        console.log('🔍 Refresh Token:', tokens.refresh_token ? `Presente (${tokens.refresh_token.substring(0, 10)}...)` : 'AUSENTE ❌');
         console.log('🔍 Expires In:', tokens.expires_in);
+        console.log('🔍 Expires At:', new Date(tokens.expires_at).toLocaleString());
 
         // Salva tokens no localStorage (inicia auto-refresh automaticamente)
         googleAuthService.saveTokens(tokens);
